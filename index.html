@@ -32,6 +32,16 @@
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  var hash = window.location.hash || '';
+  var search = window.location.search || '';
+  var hasOAuthPayload = /access_token=|code=|error=/.test(hash + search);
+  if (hasOAuthPayload && !window.location.pathname.includes('/portal/')) {
+    window.location.replace('portal/login.html' + search + hash);
+  }
+})();
+</script>
  
 <style>
 /* �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.�
