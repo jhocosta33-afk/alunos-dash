@@ -230,6 +230,7 @@ input::placeholder { color: var(--text-muted); }
 <script src="supabase-config.js"></script>
 
 <script>
+const APP_URL = 'https://jhocosta33-afk.github.io/alunos-dash';
 
 // Aguarda Supabase estar pronto
 document.addEventListener('supabase-ready', inicializar);
@@ -397,7 +398,7 @@ function inicializar() {
       mostrarAlerta('\u{1F504} Redirecionando para o Google...', 'warning');
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + window.location.pathname }
+        options: { redirectTo: APP_URL + '/portal/login.html' }
       });
       if (error) mostrarAlerta('\u274C Erro ao entrar com Google: ' + error.message, 'error');
     });
@@ -410,7 +411,7 @@ function inicializar() {
     if (!email) { mostrarAlerta('\u274C Digite seu e-mail primeiro', 'error'); return; }
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/portal/reset-password.html'
+        redirectTo: APP_URL + '/portal/reset-password.html'
       });
       if (error) throw error;
       mostrarAlerta('\u2705 E-mail de recupera\u00e7\u00e3o enviado! Verifique sua caixa de entrada.', 'warning');

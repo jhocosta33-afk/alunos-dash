@@ -375,10 +375,34 @@ td { padding: 12px; border-bottom: 1px solid var(--border); }
           <option value="be">Breakeven</option>
           <option value="manual">Manuais</option>
         </select>
+        <input id="filtroDataInicioTrade" type="date" onchange="renderizarDesempenhoAlunos()" style="min-width:170px;padding:10px 14px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;">
+        <input id="filtroDataFimTrade" type="date" onchange="renderizarDesempenhoAlunos()" style="min-width:170px;padding:10px 14px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;">
         <input id="buscaTradeAluno" oninput="renderizarDesempenhoAlunos()" placeholder="Buscar aluno ou observacao..." style="flex:1;min-width:220px;padding:10px 14px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;">
       </div>
 
       <div id="alert-desempenho" class="alert"></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:14px;margin-bottom:16px;">
+        <div class="card" style="margin:0;padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+            <div>
+              <div style="font-size:14px;font-weight:900;">Top Alunos</div>
+              <div style="font-size:12px;color:var(--text-muted);">Ordenado por pontos no período filtrado</div>
+            </div>
+            <span class="badge approved" id="badge-top-alunos">0 alunos</span>
+          </div>
+          <div id="ranking-alunos" style="display:grid;gap:10px;"></div>
+        </div>
+        <div class="card" style="margin:0;padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+            <div>
+              <div style="font-size:14px;font-weight:900;">Distribuição</div>
+              <div style="font-size:12px;color:var(--text-muted);">Ganhos x perdas x breakeven</div>
+            </div>
+            <span class="badge approved" id="badge-distros">0 trades</span>
+          </div>
+          <div id="mini-chart" style="display:grid;gap:10px;"></div>
+        </div>
+      </div>
       <div id="resumo-alunos" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;"></div>
       <div id="lista-desempenho">
         <div class="loading"><div class="spinner"></div><p>Carregando desempenho...</p></div>
@@ -2068,13 +2092,37 @@ function formatarDataTrade(valor) {
   return date.toLocaleDateString('pt-BR');
 }
 
+function dataComparable(valor) {
+  if (!valor) return 0;
+  const date = new Date(valor);
+  return isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
+function montarBarraRotulo(rotulo, valor, total, cor) {
+  const percent = total > 0 ? Math.max(0, Math.round((valor / total) * 100)) : 0;
+  return `
+    <div>
+      <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:6px;">
+        <span style="font-weight:800;">${rotulo}</span>
+        <span style="color:var(--text-muted);">${valor}</span>
+      </div>
+      <div style="height:12px;border-radius:999px;background:rgba(255,255,255,0.05);overflow:hidden;border:1px solid var(--border);">
+        <div style="width:${percent}%;height:100%;background:${cor};border-radius:999px;"></div>
+      </div>
+    </div>`;
+}
+
 function renderizarDesempenhoAlunos() {
   const container = document.getElementById('lista-desempenho');
   const resumo = document.getElementById('resumo-alunos');
+  const ranking = document.getElementById('ranking-alunos');
+  const chart = document.getElementById('mini-chart');
   const trades = obterTradesLocais();
   const filtroAluno = document.getElementById('filtroAlunoTrade')?.value || 'todos';
   const filtroAtivo = document.getElementById('filtroAtivoTrade')?.value || 'todos';
   const filtroResultado = document.getElementById('filtroResultadoTrade')?.value || 'todos';
+  const dataInicio = document.getElementById('filtroDataInicioTrade')?.value || '';
+  const dataFim = document.getElementById('filtroDataFimTrade')?.value || '';
   const busca = (document.getElementById('buscaTradeAluno')?.value || '').toLowerCase().trim();
 
   const usuariosBase = (_todosAlunos.length ? _todosAlunos : _todosUsuarios).filter(function(u) {
@@ -2092,11 +2140,14 @@ function renderizarDesempenhoAlunos() {
     const matchAluno = filtroAluno === 'todos' || t.alunoId === filtroAluno;
     const matchAtivo = filtroAtivo === 'todos' || t.ativo === filtroAtivo;
     const matchResultado = filtroResultado === 'todos' || normalizarResultadoTrade(t.resultado) === filtroResultado;
+    const dataTrade = (t.data || t.criadoEm || '').slice(0, 10);
+    const matchDataInicio = !dataInicio || dataTrade >= dataInicio;
+    const matchDataFim = !dataFim || dataTrade <= dataFim;
     const texto = [
       t.alunoNome, t.alunoEmail, t.ativo, t.resultado, t.observacao, t.risco, t.entrada, t.saida, t.stop
     ].join(' ').toLowerCase();
     const matchBusca = !busca || texto.includes(busca);
-    return matchAluno && matchAtivo && matchResultado && matchBusca;
+    return matchAluno && matchAtivo && matchResultado && matchDataInicio && matchDataFim && matchBusca;
   });
 
   const total = filtrados.length;
@@ -2112,17 +2163,58 @@ function renderizarDesempenhoAlunos() {
   document.getElementById('stat-dealunos-be').textContent = be;
   document.getElementById('stat-dealunos-assert').textContent = assertividade + '%';
 
-  if (resumo) {
-    const agrupar = new Map();
-    filtrados.forEach(function(t) {
-      const key = t.alunoId || 'desconhecido';
-      if (!agrupar.has(key)) agrupar.set(key, []);
-      agrupar.get(key).push(t);
-    });
+  const porAluno = new Map();
+  filtrados.forEach(function(t) {
+    const key = t.alunoId || 'desconhecido';
+    const atual = porAluno.get(key) || { alunoId: key, alunoNome: t.alunoNome || key, alunoEmail: t.alunoEmail || '', trades: [], pontos: 0, wins: 0, losses: 0, be: 0 };
+    atual.trades.push(t);
+    atual.pontos += Number(t.pontos) || 0;
+    const resultado = normalizarResultadoTrade(t.resultado);
+    if (resultado === 'win') atual.wins += 1;
+    else if (resultado === 'loss') atual.losses += 1;
+    else if (resultado === 'be') atual.be += 1;
+    porAluno.set(key, atual);
+  });
 
-    const cards = Array.from(agrupar.entries()).map(function([alunoId, lista]) {
-      const aluno = usuariosBase.find(function(u) { return u.id === alunoId; }) || { id: alunoId, nome: alunoId, email: '' };
-      return criarCardResumoAluno(aluno, lista);
+  const rankingArray = Array.from(porAluno.values()).sort(function(a, b) {
+    if (b.pontos !== a.pontos) return b.pontos - a.pontos;
+    if ((b.wins - b.losses) !== (a.wins - a.losses)) return (b.wins - b.losses) - (a.wins - a.losses);
+    return b.trades.length - a.trades.length;
+  });
+
+  if (ranking) {
+    document.getElementById('badge-top-alunos').textContent = rankingArray.length + ' alunos';
+    ranking.innerHTML = rankingArray.length ? rankingArray.slice(0, 5).map(function(item, index) {
+      const perf = item.wins + item.losses;
+      const assertAluno = perf ? Math.round((item.wins / perf) * 100) : 0;
+      return `
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,0.03);">
+          <div style="min-width:0;">
+            <div style="font-size:12px;color:var(--text-muted);font-weight:800;margin-bottom:4px;">#${index + 1}</div>
+            <div style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escaparHtml(item.alunoNome || item.alunoId || 'Aluno')}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${item.trades.length} trades | ${assertAluno}% assertividade</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:20px;font-weight:900;">${item.pontos > 0 ? '+' : ''}${item.pontos}</div>
+            <div style="font-size:12px;color:var(--text-muted);">pontos</div>
+          </div>
+        </div>`;
+    }).join('') : '<div style="text-align:center;color:var(--text-muted);padding:12px 0;">Sem dados para ranquear.</div>';
+  }
+
+  if (chart) {
+    document.getElementById('badge-distros').textContent = total + ' trades';
+    chart.innerHTML = [
+      montarBarraRotulo('Ganhos', wins, total, 'linear-gradient(90deg,#22c55e,#16a34a)'),
+      montarBarraRotulo('Perdas', losses, total, 'linear-gradient(90deg,#ef4444,#dc2626)'),
+      montarBarraRotulo('Breakeven', be, total, 'linear-gradient(90deg,#f59e0b,#d97706)')
+    ].join('');
+  }
+
+  if (resumo) {
+    const cards = rankingArray.map(function(item) {
+      const aluno = usuariosBase.find(function(u) { return u.id === item.alunoId; }) || { id: item.alunoId, nome: item.alunoNome, email: item.alunoEmail };
+      return criarCardResumoAluno(aluno, item.trades);
     });
     resumo.style.gridTemplateColumns = cards.length > 2 ? 'repeat(2,minmax(0,1fr))' : 'repeat(1,minmax(0,1fr))';
     resumo.innerHTML = cards.length ? cards.join('') : '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:12px 0;">Sem trades para os filtros atuais.</div>';
@@ -2327,6 +2419,8 @@ document.getElementById('diaData').addEventListener('input', e => {
 });
 window.addEventListener('DOMContentLoaded', () => {
   const hoje = new Date();
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate() - 30);
   document.getElementById('diaData').value = hoje.getDate();
   document.getElementById('mesData').value = hoje.getMonth() + 1;
   document.getElementById('anoData').value = hoje.getFullYear();
@@ -2334,6 +2428,10 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('diaDoTrade').value = hoje.getDate();
   document.getElementById('mesDoTrade').value = hoje.getMonth() + 1;
   document.getElementById('anoDoTrade').value = hoje.getFullYear();
+  const filtroInicio = document.getElementById('filtroDataInicioTrade');
+  const filtroFim = document.getElementById('filtroDataFimTrade');
+  if (filtroInicio) filtroInicio.value = inicio.toISOString().slice(0, 10);
+  if (filtroFim) filtroFim.value = hoje.toISOString().slice(0, 10);
 });
 function toggleAtivo(ativo) {
   const checked = document.getElementById(ativo+'Op').checked;

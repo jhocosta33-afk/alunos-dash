@@ -292,6 +292,7 @@ input::placeholder {
 <script src="supabase-config.js"></script>
 
 <script>
+const APP_URL = 'https://jhocosta33-afk.github.io/alunos-dash';
 document.addEventListener('supabase-ready', inicializarCadastro);
 if (window._supabase) inicializarCadastro();
 
@@ -331,7 +332,7 @@ function inicializarCadastro() {
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + window.location.pathname + '?google=1'
+        redirectTo: APP_URL + '/portal/cadastro.html?google=1'
       }
     });
     if (error) {
