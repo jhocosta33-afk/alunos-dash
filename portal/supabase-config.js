@@ -1,8 +1,8 @@
 // supabase-config.js — NasdaqPro
 // Carrega Supabase SDK via CDN e expõe client global como window._supabase
 
-const SUPABASE_URL  = 'https://lpwrinaodhuyafyjumcs.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwd3JpbmFvZGh1eWFmeWp1bWNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDI2ODcsImV4cCI6MjA4OTg3ODY4N30.30h3LLzdygnj452hnjGyGkBj-TONet7EXrgVsmxyWjg';
+const SUPABASE_URL  = 'https://bqcfotcxpumtobakgsej.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_Y4U5hNLw1UDmJ1UkTz55dg_Dfgbqlzg';
 
 (function () {
   function init() {
