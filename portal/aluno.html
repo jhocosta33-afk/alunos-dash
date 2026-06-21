@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Portal do Aluno | Dashboard NASDAQ PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var KEY='dashboard-tema';
+  function aplicar(t){
+    if(t==='light'){
+      document.documentElement.classList.add('light-theme');
+      if(document.body) document.body.classList.add('light-theme');
+    } else {
+      document.documentElement.classList.remove('light-theme');
+      if(document.body) document.body.classList.remove('light-theme');
+    }
+    var ic=document.getElementById('themeIcon');
+    if(ic) ic.textContent=t==='dark'?'🌙':'☀️';
+  }
+  function get(){ return localStorage.getItem(KEY)||'dark'; }
+  aplicar(get());
+  window.NasTheme={
+    toggle:function(){
+      var n=get()==='dark'?'light':'dark';
+      localStorage.setItem(KEY,n);
+      aplicar(n);
+      var ic=document.getElementById('themeIcon');
+      if(ic){
+        ic.style.transform='rotate(360deg) scale(0)';
+        setTimeout(function(){ ic.textContent=n==='dark'?'🌙':'☀️'; ic.style.transform='none'; },150);
+      }
+    }
+  };
+  document.addEventListener('DOMContentLoaded',function(){ aplicar(get()); });
+})();
+</script>
+<style>
+:root{
+  --bg:#060814;
+  --panel:#0f172a;
+  --panel-2:#111c33;
+  --border:rgba(148,163,184,.14);
+  --text:#e2e8f0;
+  --text-muted:#94a3b8;
+  --accent:#22c55e;
+  --blue:#60a5fa;
+  --red:#ef4444;
+  --yellow:#f59e0b;
+  --violet:#818cf8;
+  --shadow:0 18px 40px rgba(0,0,0,.28);
+}
+body.light-theme{
+  --bg:#eef2ff;
+  --panel:#ffffff;
+  --panel-2:#f8fafc;
+  --border:rgba(99,102,241,.16);
+  --text:#0f172a;
+  --text-muted:#64748b;
+  --accent:#16a34a;
+  --blue:#2563eb;
+  --red:#dc2626;
+  --yellow:#d97706;
+  --violet:#6366f1;
+  --shadow:0 16px 36px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:
+    radial-gradient(circle at top left, rgba(96,165,250,.16), transparent 30%),
+    radial-gradient(circle at top right, rgba(34,197,94,.14), transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  min-height:100vh;
+  transition:background-color .3s,color .3s;
+}
+body.light-theme{
+  background:
+    radial-gradient(circle at top left, rgba(99,102,241,.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(34,197,94,.08), transparent 28%),
+    var(--bg);
+}
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:16px 24px;background:rgba(6,8,20,.82);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+body.light-theme header{background:rgba(255,255,255,.82)}
+.header-left{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:38px;height:38px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  color:#fff;font-weight:900;box-shadow:var(--shadow);
+}
+h1{
+  font-size:20px;font-weight:800;letter-spacing:.2px;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.user-info{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.theme-toggle-btn,.btn-ghost,.btn-logout,.btn-primary,.btn-secondary,.btn-danger{
+  border-radius:10px;border:1px solid var(--border);font:inherit;cursor:pointer;transition:all .2s;
+}
+.theme-toggle-btn{
+  width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--panel);color:var(--text);
+}
+.theme-toggle-btn:hover,.btn-ghost:hover,.btn-secondary:hover{
+  border-color:var(--blue);transform:translateY(-1px);
+}
+.avatar-header{
+  width:38px;height:38px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-weight:900;
+  border:2px solid transparent;cursor:pointer;flex-shrink:0;
+}
+.avatar-header img,.avatar-big img{width:100%;height:100%;object-fit:cover}
+.btn-ghost,.btn-secondary{
+  background:var(--panel);color:var(--text);padding:10px 14px;font-weight:700;
+}
+.btn-logout{
+  background:rgba(239,68,68,.1);color:var(--red);padding:10px 16px;font-weight:800;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),#16a34a);color:#fff;border-color:transparent;
+  padding:12px 16px;font-weight:800;
+}
+.btn-danger{
+  background:rgba(239,68,68,.12);color:var(--red);padding:10px 14px;font-weight:800;
+}
+.btn-primary:hover,.btn-danger:hover,.btn-logout:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.container{max-width:1440px;margin:0 auto;padding:24px}
+.hero{
+  background:linear-gradient(135deg, rgba(34,197,94,.12), rgba(96,165,250,.12));
+  border:1px solid var(--border);border-radius:24px;padding:28px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero h2{font-size:30px;line-height:1.1;margin-bottom:8px}
+.hero p{color:var(--text-muted);max-width:820px;line-height:1.6}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;border-radius:999px;font-size:12px;font-weight:800;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);
+}
+.grid-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:18px 0 24px}
+.stat{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow);
+}
+.stat-label{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:10px;font-weight:800}
+.stat-value{font-size:30px;font-weight:900;line-height:1}
+.stat-sub{margin-top:8px;font-size:12px;color:var(--text-muted)}
+.layout{display:grid;grid-template-columns:1.2fr .9fr;gap:18px;align-items:start}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);
+}
+.card h3{font-size:18px;margin-bottom:14px}
+.card p.helper{color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{
+  font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted)
+}
+input,select,textarea{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;
+  padding:11px 13px;color:var(--text);font:inherit;transition:all .2s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+textarea{min-height:100px;resize:vertical}
+input[type="file"]{padding:10px}
+.span-2{grid-column:span 2}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.upload-box{
+  border:1.5px dashed var(--border);border-radius:16px;padding:18px;background:rgba(255,255,255,.02);
+  transition:all .2s;cursor:pointer;min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.upload-box:hover{border-color:var(--blue);background:rgba(96,165,250,.06)}
+.upload-preview{
+  display:none;gap:12px;align-items:center;justify-content:center;flex-direction:column;
+}
+.upload-preview img{max-width:100%;max-height:220px;border-radius:14px;object-fit:cover;border:1px solid var(--border)}
+.mini-note{font-size:12px;color:var(--text-muted);line-height:1.5}
+.filters{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px
+}
+.filter-btn{
+  background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--border);
+  padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.filter-btn.active{background:var(--violet);border-color:var(--violet);color:#fff}
+.table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;min-width:1020px;background:rgba(255,255,255,.01)}
+th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+th{
+  font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);
+  background:rgba(255,255,255,.04);position:sticky;top:0
+}
+td{font-size:13px;color:var(--text)}
+.pill{
+  display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.3px
+}
+.pill.win{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.pill.loss{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+.pill.be{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+.pill.manual{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty-state{
+  padding:44px 20px;text-align:center;color:var(--text-muted)
+}
+.empty-state strong{display:block;color:var(--text);margin-bottom:8px}
+.hint-box{
+  margin-top:14px;padding:14px 16px;border-radius:14px;border:1px solid rgba(96,165,250,.2);
+  background:rgba(96,165,250,.07);color:var(--text-muted);font-size:13px;line-height:1.5
+}
+.profile-grid{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.avatar-big{
+  width:96px;height:96px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-size:34px;font-weight:900;cursor:pointer;
+  border:3px solid rgba(255,255,255,.12);box-shadow:var(--shadow)
+}
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:1000;backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  width:100%;max-width:460px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow)
+}
+.modal-box h3{margin-bottom:18px}
+.close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:24px;cursor:pointer}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+@media (max-width: 1180px){
+  .grid-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .layout{grid-template-columns:1fr}
+}
+@media (max-width: 768px){
+  header{padding:14px 16px}
+  .container{padding:16px}
+  .hero{padding:20px;border-radius:18px}
+  .hero h2{font-size:24px}
+  .grid-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card{padding:18px}
+  .form-grid{grid-template-columns:1fr}
+  .span-2{grid-column:span 1}
+  .profile-grid{grid-template-columns:1fr}
+  .top-actions{width:100%}
+  .top-actions > *{flex:1}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="brand-mark">TP</div>
+    <div>
+      <h1>Portal do Aluno</h1>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Dashboard de trades e evolução</div>
+    </div>
+  </div>
+  <div class="user-info">
+    <button class="theme-toggle-btn" onclick="NasTheme.toggle()" title="Alternar tema">
+      <span id="themeIcon">🌙</span>
+    </button>
+    <div class="avatar-header" id="avatarHeader" onclick="abrirPerfil()" title="Editar perfil">
+      <span id="avatarLetra">A</span>
+    </div>
+    <span id="userName" onclick="abrirPerfil()" style="font-weight:800;cursor:pointer;">Aluno</span>
+    <button class="btn-ghost" id="btnExportar" onclick="exportarTrades()">Exportar</button>
+    <a id="btnVoltarAdmin" href="admin.html" style="display:none;text-decoration:none" class="btn-ghost">Área Admin</a>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <div class="hero-top">
+      <div>
+        <h2 id="welcomeMsg">Bem-vindo de volta</h2>
+        <p>
+          Este espaço agora é o seu dashboard de trades. Aqui o aluno vai registrar as operações, acompanhar
+          a propria evolucao e depois compartilhar os resultados com o admin.
+        </p>
+      </div>
+      <div class="top-actions">
+        <button class="btn-secondary" onclick="document.getElementById('formTrade').scrollIntoView({behavior:'smooth'})">Novo trade</button>
+        <button class="btn-primary" onclick="document.getElementById('listaTrades').scrollIntoView({behavior:'smooth'})">Ver trades</button>
+      </div>
+    </div>
+    <div class="hero-badges">
+      <span class="badge">Registro individual por aluno</span>
+      <span class="badge">Filtros prontos para o admin</span>
+      <span class="badge">Banco vem depois</span>
+    </div>
+  </section>
+
+  <section class="grid-stats" aria-label="Resumo">
+    <div class="stat">
+      <div class="stat-label">Trades</div>
+      <div class="stat-value" id="kTrades">0</div>
+      <div class="stat-sub">Total registrado</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Assertividade</div>
+      <div class="stat-value" id="kAssert">0%</div>
+      <div class="stat-sub">Wins x perdas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Ganhos</div>
+      <div class="stat-value" id="kWins">0</div>
+      <div class="stat-sub">Operações positivas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Perdas</div>
+      <div class="stat-value" id="kLosses">0</div>
+      <div class="stat-sub">Operações negativas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Pontos</div>
+      <div class="stat-value" id="kPoints">0</div>
+      <div class="stat-sub">Saldo acumulado</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Breakeven</div>
+      <div class="stat-value" id="kBE">0</div>
+      <div class="stat-sub">0x0 / neutros</div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="card">
+      <h3>Novo Trade</h3>
+      <p class="helper">Registre a operação do dia. Depois a gente conecta isso ao banco e ao painel do admin.</p>
+      <form id="formTrade">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="tradeData">Data</label>
+            <input id="tradeData" type="date" required>
+          </div>
+          <div class="form-group">
+            <label for="tradeAtivo">Ativo</label>
+            <select id="tradeAtivo" required>
+              <option value="NASDAQ">NASDAQ</option>
+              <option value="DOW JONES">DOW JONES</option>
+              <option value="S&P 500">S&P 500</option>
+              <option value="OUTRO">OUTRO</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tradeEntrada">Entrada</label>
+            <input id="tradeEntrada" type="number" step="0.01" placeholder="Ex: 19875.50" required>
+          </div>
+          <div class="form-group">
+            <label for="tradeSaida">Saida</label>
+            <input id="tradeSaida" type="number" step="0.01" placeholder="Ex: 19912.00" required>
+          </div>
+          <div class="form-group">
+            <label for="tradeStop">Stop</label>
+            <input id="tradeStop" type="number" step="0.01" placeholder="Ex: 19820.00">
+          </div>
+          <div class="form-group">
+            <label for="tradeResultado">Resultado</label>
+            <select id="tradeResultado" required>
+              <option value="win">Gain</option>
+              <option value="loss">Loss</option>
+              <option value="be">Breakeven</option>
+              <option value="manual">Manual</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tradePontos">Pontos</label>
+            <input id="tradePontos" type="number" step="1" placeholder="Ex: 35" required>
+          </div>
+          <div class="form-group">
+            <label for="tradeRisco">Risco</label>
+            <input id="tradeRisco" type="text" placeholder="Ex: 1R / 2 contratos">
+          </div>
+          <div class="form-group span-2">
+            <label for="tradeObservacao">Observacao</label>
+            <textarea id="tradeObservacao" placeholder="Escreva o contexto da operacao, leitura, emocao, erro ou acerto"></textarea>
+          </div>
+          <div class="form-group span-2">
+            <label>Print do trade</label>
+            <div class="upload-box" id="uploadBox">
+              <input id="tradeImagem" type="file" accept="image/*" style="display:none">
+              <div id="uploadPlaceholder">
+                <strong>Arraste o print aqui</strong>
+                <div class="mini-note">ou clique para selecionar. Nesta fase o arquivo fica salvo localmente.</div>
+              </div>
+              <div id="uploadPreview" class="upload-preview">
+                <img id="previewImg" alt="Preview do print">
+                <button type="button" class="btn-danger" onclick="removerImagem()">Remover print</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="btnSalvarTrade">Salvar trade</button>
+          <button type="button" class="btn-secondary" onclick="limparFormulario()">Limpar</button>
+        </div>
+      </form>
+      <div class="hint-box">
+        Os dados deste prototipo ficam no navegador por enquanto. Quando a base do banco estiver definida, vamos trocar
+        só a camada de persistencia sem mudar esta tela.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Perfil do aluno</h3>
+      <p class="helper">Mantemos a edicao basica de perfil para nao perder o fluxo de login do portal.</p>
+      <div class="profile-grid">
+        <div class="avatar-big" id="avatarBig" onclick="document.getElementById('inputFotoPerfil').click()" title="Trocar foto">
+          <span id="avatarBigLetra">A</span>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:6px;" id="profileName">Aluno</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.5" id="profileEmail">email@exemplo.com</div>
+        </div>
+      </div>
+      <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none" onchange="previsualizarFoto(this)">
+      <div class="form-grid" style="margin-top:18px">
+        <div class="form-group span-2">
+          <label for="inputNomePerfil">Nome</label>
+          <input type="text" id="inputNomePerfil" placeholder="Seu nome completo">
+        </div>
+        <div class="form-group span-2">
+          <label for="inputEmailPerfil">E-mail</label>
+          <input type="text" id="inputEmailPerfil" disabled>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" type="button" onclick="salvarPerfil()">Salvar perfil</button>
+      </div>
+      <p id="msgPerfil" style="display:none;margin-top:12px;font-size:13px;font-weight:700"></p>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+      <div>
+        <h3 style="margin-bottom:4px">Historico de Trades</h3>
+        <p class="helper" style="margin-bottom:0">Use filtros para revisar o que foi registrado no seu painel.</p>
+      </div>
+      <div class="filters" style="margin-bottom:0">
+        <button class="filter-btn active" data-filter="todos" onclick="aplicarFiltro('todos', this)">Todos</button>
+        <button class="filter-btn" data-filter="win" onclick="aplicarFiltro('win', this)">Ganhos</button>
+        <button class="filter-btn" data-filter="loss" onclick="aplicarFiltro('loss', this)">Perdas</button>
+        <button class="filter-btn" data-filter="be" onclick="aplicarFiltro('be', this)">Breakeven</button>
+        <button class="filter-btn" data-filter="manual" onclick="aplicarFiltro('manual', this)">Manuais</button>
+      </div>
+    </div>
+    <div class="filters">
+      <select id="filtroAtivo" onchange="renderizarTrades()">
+        <option value="todos">Todos os ativos</option>
+        <option value="NASDAQ">NASDAQ</option>
+        <option value="DOW JONES">DOW JONES</option>
+        <option value="S&P 500">S&P 500</option>
+        <option value="OUTRO">OUTRO</option>
+      </select>
+      <input id="buscaTrade" type="text" placeholder="Buscar por observacao ou ativo" oninput="renderizarTrades()">
+    </div>
+    <div class="table-wrap" id="listaTrades">
+      <div class="empty-state" id="emptyTrades">
+        <strong>Nenhum trade registrado ainda</strong>
+        Comece preenchendo o formulario ao lado para montar seu historico.
+      </div>
+      <table id="tabelaTrades" style="display:none">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Ativo</th>
+            <th>Entrada</th>
+            <th>Saida</th>
+            <th>Stop</th>
+            <th>Resultado</th>
+            <th>Pontos</th>
+            <th>Observacao</th>
+            <th>Print</th>
+            <th>Acoes</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyTrades"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div class="modal-overlay" id="modalPerfil">
+  <div class="modal-box">
+    <button class="close-btn" onclick="fecharPerfil()">×</button>
+    <h3>Editar perfil</h3>
+    <div class="profile-grid">
+      <div class="avatar-big" id="avatarBigModal" onclick="document.getElementById('inputFotoPerfil').click()" title="Trocar foto">
+        <span id="avatarBigModalLetra">A</span>
+      </div>
+      <div class="mini-note">Esse perfil ajuda o admin a identificar o aluno depois, quando o banco estiver conectado.</div>
+    </div>
+    <p id="msgPerfilModal" style="display:none;margin-top:10px;font-size:13px;font-weight:700"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+let usuarioAtual = null;
+let trades = [];
+let filtroResultadoAtual = 'todos';
+let imagemTradeAtual = null;
+
+function storageKey(){
+  return 'nasdaqpro_trades_' + (usuarioAtual?.uid || 'anon');
+}
+
+function perfilKey(){
+  return 'nasdaqpro_profile_' + (usuarioAtual?.uid || 'anon');
+}
+
+function salvarTradesLocal(){
+  if(!usuarioAtual) return;
+  localStorage.setItem(storageKey(), JSON.stringify(trades));
+}
+
+function carregarTradesLocal(){
+  if(!usuarioAtual) return [];
+  try{
+    var raw = localStorage.getItem(storageKey());
+    return raw ? JSON.parse(raw) : [];
+  }catch(_err){
+    return [];
+  }
+}
+
+function carregarPerfilLocal(){
+  if(!usuarioAtual) return null;
+  try{
+    var raw = localStorage.getItem(perfilKey());
+    return raw ? JSON.parse(raw) : null;
+  }catch(_err){
+    return null;
+  }
+}
+
+function salvarPerfilLocal(extra){
+  if(!usuarioAtual) return;
+  var current = carregarPerfilLocal() || {};
+  localStorage.setItem(perfilKey(), JSON.stringify(Object.assign({}, current, extra)));
+}
+
+function setAvatar(nome, foto){
+  var letra = (nome || 'A').charAt(0).toUpperCase();
+  ['avatarLetra','avatarBigLetra','avatarBigModalLetra'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.textContent = letra;
+  });
+  ['avatarHeader','avatarBig','avatarBigModal'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(foto){
+      el.innerHTML = '<img src="' + foto + '" alt="Avatar">';
+    }else{
+      el.innerHTML = '<span>' + letra + '</span>';
+    }
+  });
+}
+
+function formatMoney(valor){
+  return Number(valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatDate(date){
+  if(!date) return '-';
+  var d = new Date(date + 'T12:00:00');
+  if(isNaN(d.getTime())) return '-';
+  return d.toLocaleDateString('pt-BR');
+}
+
+function calcularStats(lista){
+  var total = lista.length;
+  var wins = lista.filter(function(t){ return t.resultado === 'win'; }).length;
+  var losses = lista.filter(function(t){ return t.resultado === 'loss'; }).length;
+  var be = lista.filter(function(t){ return t.resultado === 'be'; }).length;
+  var pontos = lista.reduce(function(acc, t){ return acc + (Number(t.pontos) || 0); }, 0);
+  var operacoes = wins + losses;
+  var assertividade = operacoes ? Math.round((wins / operacoes) * 100) : 0;
+  return { total: total, wins: wins, losses: losses, be: be, pontos: pontos, assertividade: assertividade };
+}
+
+function atualizarStats(){
+  var stats = calcularStats(trades);
+  document.getElementById('kTrades').textContent = stats.total;
+  document.getElementById('kAssert').textContent = stats.assertividade + '%';
+  document.getElementById('kWins').textContent = stats.wins;
+  document.getElementById('kLosses').textContent = stats.losses;
+  document.getElementById('kPoints').textContent = (stats.pontos > 0 ? '+' : '') + stats.pontos;
+  document.getElementById('kBE').textContent = stats.be;
+}
+
+function normalizarResultado(valor){
+  return (valor || 'manual').toLowerCase();
+}
+
+function aplicarFiltro(filtro, btnEl){
+  filtroResultadoAtual = filtro;
+  document.querySelectorAll('.filter-btn').forEach(function(btn){ btn.classList.remove('active'); });
+  if(btnEl) btnEl.classList.add('active');
+  renderizarTrades();
+}
+
+function renderizarTrades(){
+  var tbody = document.getElementById('tbodyTrades');
+  var tabela = document.getElementById('tabelaTrades');
+  var empty = document.getElementById('emptyTrades');
+  var busca = (document.getElementById('buscaTrade').value || '').toLowerCase().trim();
+  var filtroAtivo = document.getElementById('filtroAtivo').value;
+
+  var filtradas = trades.filter(function(t){
+    var matchResultado = filtroResultadoAtual === 'todos' || normalizarResultado(t.resultado) === filtroResultadoAtual;
+    var matchAtivo = filtroAtivo === 'todos' || t.ativo === filtroAtivo;
+    var texto = [
+      t.ativo, t.observacao, t.entrada, t.saida, t.stop, t.pontos, t.resultado
+    ].join(' ').toLowerCase();
+    var matchBusca = !busca || texto.indexOf(busca) !== -1;
+    return matchResultado && matchAtivo && matchBusca;
+  });
+
+  if(!filtradas.length){
+    tabela.style.display = 'none';
+    empty.style.display = 'block';
+    empty.innerHTML = '<strong>Nenhum trade encontrado</strong> Ajuste os filtros ou registre uma nova operacao.';
+    atualizarStats();
+    return;
+  }
+
+  empty.style.display = 'none';
+  tabela.style.display = 'table';
+  tbody.innerHTML = filtradas.map(function(t, index){
+    var title = t.printPreview ? 'Print anexado' : 'Sem print';
+    var obs = t.observacao ? t.observacao.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '-';
+    return [
+      '<tr>',
+      '<td>' + formatDate(t.data) + '</td>',
+      '<td><strong>' + (t.ativo || '-') + '</strong></td>',
+      '<td>' + (t.entrada || '-') + '</td>',
+      '<td>' + (t.saida || '-') + '</td>',
+      '<td>' + (t.stop || '-') + '</td>',
+      '<td><span class="pill ' + normalizarResultado(t.resultado) + '">' + (t.resultado || 'manual') + '</span></td>',
+      '<td>' + (Number(t.pontos) > 0 ? '+' : '') + (t.pontos || 0) + '</td>',
+      '<td style="max-width:260px;white-space:pre-wrap;">' + obs + '</td>',
+      '<td>' + (t.printPreview ? '<button class="btn-secondary" type="button" onclick="abrirPrint(\'' + t.id + '\')">Ver</button>' : title) + '</td>',
+      '<td><div class="row-actions"><button class="btn-secondary" type="button" onclick="editarTrade(\'' + t.id + '\')">Editar</button><button class="btn-danger" type="button" onclick="removerTrade(\'' + t.id + '\')">Excluir</button></div></td>',
+      '</tr>'
+    ].join('');
+  }).join('');
+  atualizarStats();
+}
+
+function limparFormulario(){
+  document.getElementById('formTrade').reset();
+  document.getElementById('tradeData').valueAsDate = new Date();
+  document.getElementById('uploadPlaceholder').style.display = 'block';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('previewImg').src = '';
+  imagemTradeAtual = null;
+}
+
+function removerImagem(){
+  imagemTradeAtual = null;
+  document.getElementById('tradeImagem').value = '';
+  document.getElementById('uploadPlaceholder').style.display = 'block';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('previewImg').src = '';
+}
+
+function processarImagem(file){
+  if(!file || !file.type || file.type.indexOf('image/') !== 0){
+    alert('Selecione uma imagem.');
+    return;
+  }
+  if(file.size > 4 * 1024 * 1024){
+    alert('Use uma imagem menor para esta etapa do prototipo.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    imagemTradeAtual = e.target.result;
+    document.getElementById('previewImg').src = imagemTradeAtual;
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadPreview').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+function abrirPrint(id){
+  var trade = trades.find(function(t){ return t.id === id; });
+  if(trade && trade.printPreview){
+    var win = window.open('', '_blank');
+    if(win){
+      win.document.write('<title>Print do trade</title><img src="' + trade.printPreview + '" style="max-width:100%;height:auto;display:block;margin:0 auto;">');
+      win.document.close();
+    }
+  }
+}
+
+function editarTrade(id){
+  var trade = trades.find(function(t){ return t.id === id; });
+  if(!trade) return;
+  document.getElementById('tradeData').value = trade.data || '';
+  document.getElementById('tradeAtivo').value = trade.ativo || 'NASDAQ';
+  document.getElementById('tradeEntrada').value = trade.entrada || '';
+  document.getElementById('tradeSaida').value = trade.saida || '';
+  document.getElementById('tradeStop').value = trade.stop || '';
+  document.getElementById('tradeResultado').value = trade.resultado || 'manual';
+  document.getElementById('tradePontos').value = trade.pontos || '';
+  document.getElementById('tradeRisco').value = trade.risco || '';
+  document.getElementById('tradeObservacao').value = trade.observacao || '';
+  imagemTradeAtual = trade.printPreview || null;
+  if(imagemTradeAtual){
+    document.getElementById('previewImg').src = imagemTradeAtual;
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadPreview').style.display = 'flex';
+  }
+  trades = trades.filter(function(t){ return t.id !== id; });
+  salvarTradesLocal();
+  renderizarTrades();
+  document.getElementById('formTrade').scrollIntoView({ behavior:'smooth' });
+}
+
+function removerTrade(id){
+  if(!confirm('Excluir este trade?')) return;
+  trades = trades.filter(function(t){ return t.id !== id; });
+  salvarTradesLocal();
+  renderizarTrades();
+}
+
+function exportarTrades(){
+  var payload = JSON.stringify(trades, null, 2);
+  var blob = new Blob([payload], { type:'application/json;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'trades_' + new Date().toISOString().slice(0,10) + '.json';
+  link.click();
+}
+
+function abrirPerfil(){
+  document.getElementById('modalPerfil').classList.add('open');
+}
+
+function fecharPerfil(){
+  document.getElementById('modalPerfil').classList.remove('open');
+}
+
+function previsualizarFoto(input){
+  var file = input.files && input.files[0];
+  if(!file) return;
+  if(file.size > 2 * 1024 * 1024){
+    alert('Use uma imagem menor para o avatar.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    if(usuarioAtual){
+      usuarioAtual.fotoUrl = e.target.result;
+      salvarPerfilLocal({ fotoUrl: usuarioAtual.fotoUrl });
+      setAvatar(usuarioAtual.nome, usuarioAtual.fotoUrl);
+      document.getElementById('profileName').textContent = usuarioAtual.nome;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function salvarPerfil(){
+  var nome = (document.getElementById('inputNomePerfil').value || '').trim();
+  if(!nome){ alert('Preencha o nome.'); return; }
+  usuarioAtual.nome = nome;
+  document.getElementById('userName').textContent = nome;
+  document.getElementById('welcomeMsg').textContent = 'Bem-vindo de volta, ' + nome.split(' ')[0] + '!';
+  salvarPerfilLocal({ nome: nome, fotoUrl: usuarioAtual.fotoUrl || null });
+  setAvatar(usuarioAtual.nome, usuarioAtual.fotoUrl || null);
+  document.getElementById('profileName').textContent = usuarioAtual.nome;
+  document.getElementById('msgPerfil').style.display = 'block';
+  document.getElementById('msgPerfil').style.color = '#22c55e';
+  document.getElementById('msgPerfil').textContent = 'Perfil salvo localmente.';
+}
+
+async function fazerLogout(){
+  if(confirm('Deseja sair da sua conta?')){
+    localStorage.removeItem(storageKey());
+    window.location.href = 'login.html';
+  }
+}
+
+function inicializarDataHoje(){
+  var hoje = new Date();
+  document.getElementById('tradeData').valueAsDate = hoje;
+}
+
+function carregarInterfaceUsuario(user, userData){
+  usuarioAtual = {
+    uid: user.id,
+    nome: userData.nome || user.user_metadata?.full_name || user.email.split('@')[0],
+    email: user.email,
+    fotoUrl: userData.foto_url || user.user_metadata?.avatar_url || null
+  };
+
+  var perfilLocal = carregarPerfilLocal();
+  if(perfilLocal){
+    if(perfilLocal.nome) usuarioAtual.nome = perfilLocal.nome;
+    if(perfilLocal.fotoUrl) usuarioAtual.fotoUrl = perfilLocal.fotoUrl;
+  }
+
+  document.getElementById('userName').textContent = usuarioAtual.nome;
+  document.getElementById('welcomeMsg').textContent = 'Bem-vindo de volta, ' + usuarioAtual.nome.split(' ')[0] + '!';
+  document.getElementById('profileName').textContent = usuarioAtual.nome;
+  document.getElementById('profileEmail').textContent = usuarioAtual.email;
+  document.getElementById('inputNomePerfil').value = usuarioAtual.nome;
+  document.getElementById('inputEmailPerfil').value = usuarioAtual.email;
+  setAvatar(usuarioAtual.nome, usuarioAtual.fotoUrl);
+  trades = carregarTradesLocal();
+  atualizarStats();
+  renderizarTrades();
+}
+
+async function inicializar(){
+  var sb = window._supabase;
+  if(!sb) return;
+  var sessionResp = await sb.auth.getSession();
+  var session = sessionResp?.data?.session;
+  if(!session){ window.location.href = 'login.html'; return; }
+
+  try{
+    var user = session.user;
+    var userResp = await sb.from('users').select('*').eq('id', user.id).single();
+    var userData = userResp.data;
+    if(userResp.error || !userData){
+      await sb.auth.signOut();
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if(userData.role === 'admin'){
+      var fromAdmin = new URLSearchParams(window.location.search).get('from') === 'admin';
+      var vistaAluno = localStorage.getItem('nasdaqpro_vista_preferencia') === 'aluno';
+      if(!fromAdmin && !vistaAluno){ window.location.href = 'admin.html'; return; }
+      var btnVoltar = document.getElementById('btnVoltarAdmin');
+      if(btnVoltar) btnVoltar.style.display = '';
+    }
+
+    if(userData.aprovado !== true){
+      alert('Sua conta ainda aguarda aprovacao.');
+      await sb.auth.signOut();
+      window.location.href = 'login.html';
+      return;
+    }
+
+    carregarInterfaceUsuario(user, userData);
+    inicializarDataHoje();
+  }catch(err){
+    console.error('Erro na inicializacao do aluno:', err);
+    window.location.href = 'login.html';
+  }
+}
+
+document.addEventListener('supabase-ready', inicializar);
+if(window._supabase) inicializar();
+
+document.getElementById('tradeImagem').addEventListener('change', function(e){
+  if(e.target.files && e.target.files[0]) processarImagem(e.target.files[0]);
+});
+
+document.getElementById('uploadBox').addEventListener('click', function(){
+  document.getElementById('tradeImagem').click();
+});
+
+['dragenter','dragover','dragleave','drop'].forEach(function(ev){
+  document.getElementById('uploadBox').addEventListener(ev, function(e){
+    e.preventDefault();
+    e.stopPropagation();
+  });
+});
+document.getElementById('uploadBox').addEventListener('drop', function(e){
+  var file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(file) processarImagem(file);
+});
+
+document.getElementById('formTrade').addEventListener('submit', function(e){
+  e.preventDefault();
+  var btn = document.getElementById('btnSalvarTrade');
+  var novoTrade = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    data: document.getElementById('tradeData').value,
+    ativo: document.getElementById('tradeAtivo').value,
+    entrada: document.getElementById('tradeEntrada').value,
+    saida: document.getElementById('tradeSaida').value,
+    stop: document.getElementById('tradeStop').value,
+    resultado: document.getElementById('tradeResultado').value,
+    pontos: Number(document.getElementById('tradePontos').value || 0),
+    risco: document.getElementById('tradeRisco').value.trim(),
+    observacao: document.getElementById('tradeObservacao').value.trim(),
+    printPreview: imagemTradeAtual,
+    criadoEm: new Date().toISOString()
+  };
+
+  if(!novoTrade.data || !novoTrade.ativo){
+    alert('Preencha a data e o ativo.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  trades.unshift(novoTrade);
+  salvarTradesLocal();
+  renderizarTrades();
+  limparFormulario();
+  btn.disabled = false;
+  btn.textContent = 'Salvar trade';
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') fecharPerfil();
+});
+</script>
+</body>
+</html>
